@@ -32,10 +32,11 @@ class Magnificent:
             if self.status_code == 200:
                 self.status = "SUCCESS"
                 self.success_count += 1
-            elif self.status_code == 500:
+                self.log_response("success")
+            else:
                 self.status = "FAILURE"
                 self.failure_count += 1
-            self.log_response()
+                self.log_response("failure")
 
         except Exception as e:
             """
@@ -44,19 +45,19 @@ class Magnificent:
             self.status_code = 408
             self.status = "NOT RESPONDING"
             self.failure_count += 1
-            self.log_response()
+            self.log_response("failure")
 
-    def log_response(self):
+    def log_response(self, status):
         """
         log response
         """
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         health = self.success_count / (self.success_count + self.failure_count) * 100
         log = f"{now} | {self.status_code} | {self.status} | health = {health}%"
-        if self.status_code == 408:
-            logging.error(log)
-        else:
+        if status == "success":
             logging.info(log)
+        else:
+            logging.error(log)
 
 
 def run():
